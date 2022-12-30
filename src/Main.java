@@ -5,7 +5,7 @@ import java.util.*;
 public class Main {
     private boolean isRunning = true;
     Map<String, Integer> map = new HashMap<>();
-    List<Person> queue = new LinkedList<>();
+    LinkedList<Person> queue = new LinkedList<>();
 
 
     private int getNextID(String personalInformation){
@@ -38,8 +38,14 @@ public class Main {
                 if (command.equals("END")) {
                     end();
                 } else if (command.startsWith("ADD PERSON")) {
-                    String personalInfo = command.substring(11, command.length() - 1);
-                    addPerson(personalInfo);
+                    String paramsStr = command.substring(11, command.length() - 1);
+                    String[] params = paramsStr.split(",");
+                    boolean isVIP = false;
+                    if (params.length == 2 && params[1].equals("VIP")){
+                        isVIP = true;
+                    }
+                    System.out.println( Arrays.toString(params));
+                    addPerson(params[0], isVIP);
 
                 } else if (command.startsWith("PROCESS")) {
                     process();
@@ -70,12 +76,18 @@ public class Main {
         isRunning = false;
     }
 
-    private void addPerson(String personalInformation){
+    private void addPerson(String personalInformation, boolean isVIP){
         String[] separatedNameSurmane = personalInformation.split("_");
         Person person = new Person(separatedNameSurmane[0], separatedNameSurmane[1], getNextID(personalInformation) );
         System.out.println("Add person: " + person);
+        if (isVIP){
+            System.out.println("VIP!");
+            queue.addFirst(person);
+        }else {
         queue.add(person);
+        }
         System.out.println("Queue: " + queue);
+
     }
 
     private void process(){
