@@ -5,7 +5,7 @@ import java.util.*;
 public class Main {
     private boolean isRunning = true;
     Map<String, Integer> map = new HashMap<>();
-    Queue<Person> queue = new ArrayDeque<>();
+    List<Person> queue = new LinkedList<>();
 
 
     private int getNextID(String personalInformation){
@@ -45,7 +45,15 @@ public class Main {
                     process();
 
                 } else if (command.startsWith("LEAVE PERSON")) {
-                    leavePerson();
+
+                    String leavingPerson = command.substring(13, command.length() - 1);
+                    try {
+                        leavePerson(leavingPerson);
+                        System.out.println(leavingPerson + " has left");
+                    } catch (Exception exc) {
+                        System.out.println(exc);
+
+                    }
 
                 } else {
                     System.out.println("I don't know this command");
@@ -71,16 +79,17 @@ public class Main {
     }
 
     private void process(){
-        Person removePerson = queue.remove();
+        Person removePerson = queue.remove(0);
         System.out.println("Processing queue: " + removePerson + " arrived at the store");
         System.out.println("Current queue: " + queue);
     }
 
-    private void leavePerson(){
-        Person leavingPerson = queue.poll();
-        System.out.println(leavingPerson + "has left");
+    private void leavePerson(String personalInformation) throws Exception{
+        boolean hasLeft = queue.removeIf(person -> person.toString().equals(personalInformation));
+        if (!hasLeft){
+            throw new Exception("Unable to find person");
+        }
         System.out.println("Current queue: " + queue);
-
 
     }
 
